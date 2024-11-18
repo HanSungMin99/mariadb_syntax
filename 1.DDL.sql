@@ -7,7 +7,7 @@ show databases; -> 마지막에 ; 반드시 해주어야 함
 -- 스키마(database) 생성
 CREATE DATABASE board;
 
--- 스키마(database) tkrwp
+-- 스키마(database) 삭제
 DROP DATABASE board;
 
 -- 데이터베이스 선택 (중요)
@@ -26,7 +26,7 @@ alter DATABASE board DEFAULT CHARACTER SET = utf8mb4;
 create table author(컬럼명, 타입(문자-길이, 숫자-범위 등), pk(유일한 키));
 create table author(id INT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), password VARCHAR(255));
 
--- 테이블 컬럼조회 (중요)
+-- 테이블 컬럼조회 (중요) -> 칼럼 조회이지만 조회 시에는 describe 뒤에 테이블명 넣음
 describe author;
 
 -- 테이블 컬럼 상세조회
