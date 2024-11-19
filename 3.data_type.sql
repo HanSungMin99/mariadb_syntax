@@ -58,11 +58,42 @@ select * from author where id not(id < 2 or id > 4);
 select * from author where id in(2,3,4); → in 안에 select문 넣을 수도 있음. 예) select * from author where id in(select author_id from post);
 select * from author where id not in(1,5); ←전체데이터가 1~5까지 밖에 없다는 가정
 
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- like: 특정 문자를 포함하는 데이터를 조회하기 위해 사용하는 키워드
+select * from post where title like '%h'; →h로 끝나는 title 검색
+select * from post where title like 'h%'; →h로 시작하는 title 검색
+select * from post where title like '%h%'; →단어의 중간에 h라는 키워드가 있는 경우 검색(h가 포함된 모든 단어 검색) 
 
 
+-- regexp: 정규표현식을 활용한 조회, not regexp를 활용할 수도 있음
+select * from post where title regexp'[a-z]'; → 문자열에 하나라도 알파벳 소문자가 들어있으면,만약 대소문자 구분하고 싶으면 where 뒤에 BINARY를 붙여주면 된다. 
+select * from post where title not regexp'[a-z]'; → 문자열에 알파벳이 포함되지 않은 것 조회
+select * from post where title regexp'[가-힣]'; →하나라도 한글이 포함되어 있으면 
 
+-- 날짜 변환 cast, convert: 숫자 → 날짜, 문자 → 날짜
+select cast(20241119 as date);
+select cast('20241119' as date);
+select convert(20241119, date);
+select convert('20241119', date);
+-- 문자를 숫자로도 변환 가능, 
+select cast('12' as unsigned); 
 
+-- 날짜 조회 방법
+ 1. like 패턴 활용: select * from post where created_time like '2024-11%'; → 문자열처럼 조회
+ 2. 부등호 활용: select * from post where created_time >= '2024-01-01' and created_time < '2025-01-01'; → 2024년 데이터 조회
+ 3. date_format 활용: select date_format(created_time, '%Y(Y는 대문자로 해야 함)-%m(소문자로 해야 함)-%d(소문자로 해야 함)') from post; → DATETIME 타입에서 시간적 요소 빼고 조회
+                      select date_format(created_time, '%H:%i:%s') from post; → DATETIME 타입에서 시간적 요소만 조회
+                      select * from post where date_format(created_time, '%Y')='2024';
+                      select * from post where cast(data_format(created_time, '%Y')='2024' as unsigned) = 2024;
 
+-- 오늘 현재 날짜와 시간 찍어내는 방법
+select now();
+
+-- (실습) 2024년 데이터만 조회해라
+select * from post where created_time > '2024';
+select * from post where created_time like '2024%';
+select * from post where date_format(created_time, '%Y') = '2024';
 
 
 
