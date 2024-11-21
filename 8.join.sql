@@ -46,3 +46,67 @@ select * from author where id in (select author_id from post);
 select a.email, (select count(*)from post where author_id=a.id) from author a; 
 -- from절 안에 서브쿼리
 select a.name from(select * from author) as a;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+-- 없어진 기록 찾기
+-- 서브쿼리 활용 
+select ANIMAL_ID, NAME from ANIMAL_OUTS where ANIMAL_ID not in (select ANIMAL_ID from ANIMAL_INS) order by ANIMAL_ID;
+-- 조인 활용
+select o.ANIMAL_ID, o.NAME from ANIMAL_OUTS o left join ANIMAL_INS i on i.ANIMAL_ID=o.ANIMAL_ID where i.ANIMAL_ID is null order by i.ANIMAL_ID;
+
+-- 집계함수
+select count(*) from author; 〓 select count(id) from author; 
+select count(id) from author; 와 select count(name) from author; 은 다르다 → null 값은 count에서 제외
+select sum(price) from post;
+select avg(price) from post; → 소수점을 정해서 구하고 싶을때 round함수 사용: select round(avg(price),0) from post; <소수점 첫번째자리에서 반올림해서 소수점을 없앰>
+
+-- group by: 그룹화된 데이터를 하나의 행(row)처럼 취급.
+-- author_id로 그룹핑 하였으면, 그외의 컬럼을 조회하는 것은 적절치 않음
+select author_id from post group by author_id
+-- group by와 집계함수
+-- 아래 쿼리에서 *은 그룹화된 데이터 내에서의 개수
+select author_id, count(*) from post group by author_id;
+select author_id, count(*), sum(price) from post group by author_id;
+*실습: author의 이메일과 author 별로 본인이 쓴 글의 개수를 출력: select a.email, (select count(*)from post where author_id=a.id) from author a; 
+       = join과 group by, 집계함수 활용한 글의 개수 출력: select a.email, count(p.author_id) from author a left join post p on a.id=p.author_id group by a.email;
+         (*글을 쓰지 않은 경우 0이 나오게)
+       = join과 group by, 집계함수 활용한 글의 개수 출력:  select a.email, 
+         (*글을 쓰지 않은 경우 '글 쓴 적 없음' 문구 나오게)  case
+                                                          when count(p.author_id)  = 0 then '글쓴적없음'
+                                                          else cast(count(p.author_id) as char)
+                                                          end
+                                                         from author a left join post p on a.id=p.author_id group by a.email;
+         
+-- 순서: select from join on where group by having order by → 잘 알아야 함
+
+-- where와 group by
+-- 연도별 post 글의 개수 출력, 연도가 null인 값은 제외
+select YEAR(created_time), count(id) from post where year(created_time) is not null group by year(created_time); → select YEAR(created_time), count(id) from post where created_time is not null group by year(created_time);
+select date_format(created_time, '%Y') as year, count(*) from post where created_time is not null group by year;
+
+-- (프로그래머스) 자동차 종류 별 특정 옵션이 포함된 자동차 수 구하기
+select CAR_TYPE, count(CAR_TYPE) as 'CARS' from CAR_RENTAL_COMPANY_CAR where OPTIONS like'%통풍시트%' or OPTIONS like '%열선시트%' or OPTIONS like '%가죽시트%' group by CAR_TYPE order by CAR_TYPE;
+
+-- (프로그래머스) 입양 시각 구하기(1)
+select HOUR(DATETIME) AS HOUR, COUNT(*) FROM ANIMAL_OUTS WHERE HOUR(DATETIME)>=9 AND HOUR(DATETIME)<=19 GROUP BY HOUR(DATETIME) ORDER BY HOUR(DATETIME);
+
+-- having: group by를 통해 나온 집계값에 대한 조건
+-- 글을 2개 이상 쓴 사람에 대한 정보조회
+select author_id from post group by author_id having count(*)>=2;
+select author_id, count(*) as count from post group by author_id having count >=2;
+
+-- 동명 동물 수 찾기
+select NAME, count(ANIMAL_ID) as 'count' from ANIMAL_INS where name is not null group by NAME having count(ANIMAL_ID)>=2 order by NAME;
+
+-- 다중열 group by 
+-- post에서 작성자별로 만든 제목의 개수를 출력하시오.
+select author_id, title , count(*) from post group by author_id, title;
+
+-- 재구매가 일어난 상품과 회원리스트 구하기 
+select USER_ID, PRODUCT_ID from ONLINE_SALE group by USER_ID, PRODUCT_ID having count(*)>=2 order by USER_ID, PRODUCT_ID desc;
+
+
+
+
+
