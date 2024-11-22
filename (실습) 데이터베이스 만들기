@@ -1,0 +1,41 @@
+-- 데이터 베이스 및 테이블 생성
+create database 주문order;
+use 주문order;
+show variables like 'character_set_server';
+alter DATABASE 주문order DEFAULT CHARACTER SET = utf8mb4;
+create table users(user_id bigint PRIMARY KEY auto_increment, username varchar(50) not null, email varchar(100) not null unique, password varchar(255) not null, user_type enum('buyer','seller') not null, creared_time datetime default current_timestamp);
+describe users; 
+create table products(product_id bigint primary key auto_increment, seller_id bigint not null, name varchar(255) not null, price int not null, stock int not null, created_time datetime default current_timestamp, foreign key(seller_id) references users(user_id));
+describe products;
+create table orders(order_id bigint primary key auto_increment, customer_id bigint not null, order_date datetime default current_timestamp, foreign key(customer_id) references users(user_id));
+describe orders;
+create table order_items(order_item_id bigint primary key auto_increment, order_id bigint not null, product_id bigint not null, quantity int not null, price int not null, foreign key(order_id) references orders(order_id), foreign key(product_id) references products(product_id));
+describe order_items;
+
+
+-- 회원 정보 등록(판매자, 구매자)
+insert into users(username, email, password, user_type) values('kim', 'kim@naver.com', '1234', 'seller');
+insert into users(username, email, password, user_type) values('lee', 'lee@naver.con', '5678', 'buyer');
+select * from users;
+-- 상품 등록
+insert into products(seller_id, name, price, stock) values(1, 'handcream', 5000, 50);
+insert into products(seller_id, name, price, stock) values(1, 'tint', 15000, 100);
+insert into products(seller_id, name, price, stock) values(1, 'eyeliner', 25000, 30);
+select * from products;
+-- 상품 정보 조회
+select * from products where product_id=1;
+select * from products where product_id=2;
+select * from products where product_id=3;
+-- 핸드크림 2개, 립스틱 3개, 아이라이너 1개 주문
+insert into orders(customer_id) values(2);
+insert into order_items(order_id, product_id, quantity, price) values(2, 1, 3, 5000);
+insert into order_items(order_id, product_id, quantity, price) values(2, 2, 3, 15000);
+insert into order_items(order_id, product_id, quantity, price) values(2, 3, 3, 25000);
+select * from orders;
+-- 주문 상세 조회
+select o.order_item_id, p.name, o.quantity, o.price from order_items o left join products p on p.product_id=o.product_id where o.order_id=2;
+-- 상품 주문 시 재고 차감
+update products set stock = stock - 3 where product_id=1;
+update products set stock = stock - 3 where product_id=2;
+update products set stock = stock - 3 where product_id=3;
+select * from products;

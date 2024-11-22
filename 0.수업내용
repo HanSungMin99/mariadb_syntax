@@ -56,3 +56,14 @@ select: 가장 빈번, 조회조건방식 dynamic
 update:
 delete:
 --------------------------------------------------------------------
+10. board_renewal 에서 놓친 부분
+
+** 복합키로 author_post2 생성 **
+create table author_post2(author_id bigint not null, post_id bigint not null, primary key(author_id, post_id), foreign key(author_id) references author(id), foreign key(post_id) references post(id));
+
+** describe author_post2; **
+
+** 제약조건 테이블 **
+
+** index 조회 **
+select from author_post2 where author_id=1 and post_id=2;
