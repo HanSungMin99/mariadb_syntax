@@ -65,7 +65,7 @@ begin
      --post테이블에 insert
      insert into post(title, contents) values(inputTitle, inputContents);
      select id into postId from post order by id desc limit 1;
-     select a.id into authorId from author a where a.email=inputEmail; 
+     select id into authorId from author where email=inputEmail; 
      --author_post테이블 insert: author_id, post_id필요
      insert into author_post(author_id, post_id) values(authorId, postId);
 end
@@ -100,7 +100,7 @@ begin
         --post테이블에 insert
         insert into post(title) values("안녕하세요");
         select id into postId from post order by id desc limit 1;
-        select a.id into authorId from author a where a.email=inputEmail; 
+        select id into authorId from author where email=inputEmail; 
         --author_post테이블 insert: author_id, post_id필요
         insert into author_post(author_id, post_id) values(authorId, postId);
         set countValue = countValue+1;
