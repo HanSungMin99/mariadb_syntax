@@ -16,7 +16,7 @@ sudo apt-get install mariadb-server
 sudo systemctl start mariadb
 
 #mariadb 접속: 1234
-mariadb -u root -p
+sudo mariadb -u root -p
 create database board;
 
 #git 설치
@@ -25,7 +25,7 @@ sudo apt install git
 #git에서 repository clone
 git clone 레포지토리주소
 
-#mariadb 덤프파일 복원 작업
-mysql -u root -p board < dumpfile.sql
+#mariadb 덤프파일 복원 작업 → 실제 파일이 있는 곳(mariadb_syntax)으로 가서 작업 진행해야함. cd mariadb_syntax/
+sudo mysql -u root -p board < dumpfile.sql
 
 
