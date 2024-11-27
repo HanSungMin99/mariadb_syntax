@@ -48,7 +48,7 @@ get stocks:product:1
 #bash 쉘을 활용하여 재고 감소 프로그램 작성
 for i in {1..200}; do
  quantity=$(redis-cli -h localhost -p 6379 get stocks:product:1)
- if [ "$quantity" -;t 1 ];then 
+ if [ "$quantity" -lt 1 ];then 
     echo "stock is not available"
     break;
  fi
